@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+Figure 2–Figure supplement 1. 
+Multi-pathway balance of excitation and inhibition in different nPE neuron 
+circuits with both visual and motor input onto PV neurons.
+"""
+
+# %% Import  & settings
+
+import numpy as np
+from Model_Network import Neurons, Network, Stimulation, Simulation, RunStaticNetwork
+from Plot_NetResults import Bar_pathways, Plot_PopulationRate
+
+import warnings
+warnings.filterwarnings("ignore")
+
+# %% Figure 2 - Supp 1
+
+"""
+Please note:    
+    To reproduce all panels of the figure, 
+    vary parameter 'Panel' (see below).
+"""
+
+folder = 'Fig_2_Supp_1'
+
+### Choose panel
+Panel = 1 # [c, d] = [1, 2]
+PanelABC = ['c', 'd']
+fln = PanelABC[Panel-1]
+
+### Define neuron and network parameters
+if Panel==1: # c
+    VE, VP, MP = 1, 1, 1
+    wSV, wVS, wPP, wEP = -0.6, -0.5, -0.1, -40.0
+elif Panel==2: # d
+    VE, VP, MP = 0, 1, 1
+    wSV, wVS, wPP, wEP = -0.6, -0.5, -1.5, -40.0
+
+wPS = -(VP + abs(wVS)*MP - (1-wPP)/(-0.07*wEP) * VE) # gain = 0.07
+wPV = -(abs(wSV)*abs(wPS) + (1-wSV*wVS)*MP)
+
+NeuPar = Neurons()
+NetPar = Network(NeuPar, wPP=wPP, wPS=wPS, wPV=wPV, wEP=wEP, flag_hetero=0)
+
+### Define input parameters
+stim_max, SD = 50.0, 10.0
+r0 = np.array([1,2,2,4])
+
+StimPar = Stimulation(NeuPar, NetPar, SD, None, stim_max, r0 = r0, VE=VE, VP=VP, MP=MP)
+
+### Define simulation parameters
+SimPar = Simulation()
+
+### Run simulation
+RunStaticNetwork(NeuPar, NetPar, StimPar, SimPar, folder, fln)
+
+### Analyse & plot network
+Bar_pathways(NeuPar, NetPar, VE, VP, MP, folder, fln)
+Plot_PopulationRate(NeuPar, folder, fln)
