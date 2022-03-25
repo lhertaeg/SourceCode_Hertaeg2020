@@ -1,4 +1,4 @@
-# Code for reproduction of Hertäg & Sprekeler (2020)
+# Source code for Hertäg & Sprekeler (2020)
 „Learning prediction error neurons in a canonical interneuron circuit“
 
 This repository provides the code to **qualitatively** reproduce the publication figures, that is, creating, running, analysing and plotting the network model with excitatory cells and three types of inhibitory interneurons. 
